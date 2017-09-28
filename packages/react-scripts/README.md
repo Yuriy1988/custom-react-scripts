@@ -44,6 +44,9 @@ For example ```styles.module.css``` or ```header.module.sass``` or ```footer.mod
 - ```REACT_APP_BABEL_STAGE_0=true``` - enable stage-0 Babel preset
 - ```REACT_APP_DECORATORS=true``` - enable decorators support
 
+#### Graphql
+- ```REACT_APP_GRAPhQL``` - enable Graphql files loader and linting
+
 #### Other
 - ```REACT_APP_WEBPACK_DASHBOARD=true``` - Enables connection to the[webpack-dashboard](https://github.com/FormidableLabs/electron-webpack-dashboard) Electron app (the app must be installed on local machine)
 
