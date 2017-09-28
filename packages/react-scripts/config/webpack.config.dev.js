@@ -132,7 +132,7 @@ module.exports = {
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
       {
-        test: /\.(js|jsx|gql|graphql)$/,
+        test: /\.(js|jsx)$/,
         enforce: 'pre',
         use: [
           {
@@ -146,6 +146,19 @@ module.exports = {
               ignore: false,
               useEslintrc: false,
               // @remove-on-eject-end
+            },
+            loader: require.resolve('eslint-loader'),
+          },
+        ],
+        include: paths.appSrc,
+      },
+      {
+        test: /\.(gql|graphql)$/,
+        enforce: 'pre',
+        use: [
+          {
+            options: {
+              useEslintrc: true,
             },
             loader: require.resolve('eslint-loader'),
           },
