@@ -22,6 +22,57 @@ const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const getCustomConfig = require('./custom-react-scripts/config');
 const fs = require('fs');
+const graphqlEnv = process.env['REACT_APP_GRAPHQL'] || '';
+const isGraphqlActivated = graphqlEnv.indexOf('true') !== -1;
+
+// Prepare custom GraphQl config
+let schemaString;
+
+// Read GraphQl schema
+try {
+  schemaString = fs.readFileSync('./schema.graphql', 'utf8').toString();
+} catch (e) {
+  schemaString = fs
+    .readFileSync(path.resolve(__dirname, '../template/schema.graphql'), 'utf8')
+    .toString();
+}
+
+// Define GraphQl files ESLint config
+const customESLintConfig =
+  isGraphqlActivated && schemaString
+    ? {
+        test: /\.(gql|graphql)$/,
+        enforce: 'pre',
+        use: [
+          {
+            options: {
+              formatter: eslintFormatter,
+              eslintPath: require.resolve('eslint'),
+              // @remove-on-eject-begin
+              baseConfig: {
+                extends: [require.resolve('eslint-config-react-app')],
+              },
+              ignore: false,
+              useEslintrc: false,
+              parser: 'babel-eslint',
+              rules: {
+                'graphql/template-strings': [
+                  'warn',
+                  {
+                    env: 'literal',
+                    schemaString,
+                  },
+                ],
+              },
+              plugins: ['graphql'],
+              // @remove-on-eject-end
+            },
+            loader: require.resolve('eslint-loader'),
+          },
+        ],
+        include: paths.appSrc,
+      }
+    : {};
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -132,6 +183,7 @@ module.exports = {
 
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
+      customESLintConfig,
       {
         test: /\.(js|jsx)$/,
         enforce: 'pre',
@@ -146,40 +198,6 @@ module.exports = {
               },
               ignore: false,
               useEslintrc: false,
-              // @remove-on-eject-end
-            },
-            loader: require.resolve('eslint-loader'),
-          },
-        ],
-        include: paths.appSrc,
-      },
-      {
-        test: /\.(gql|graphql)$/,
-        enforce: 'pre',
-        use: [
-          {
-            options: {
-              formatter: eslintFormatter,
-              eslintPath: require.resolve('eslint'),
-              // @remove-on-eject-begin
-              baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
-              },
-              ignore: false,
-              useEslintrc: false,
-              parser: 'babel-eslint',
-              rules: {
-                'graphql/template-strings': [
-                  'warn',
-                  {
-                    env: 'literal',
-                    schemaString: fs
-                      .readFileSync('./schema.graphql', 'utf8')
-                      .toString(),
-                  },
-                ],
-              },
-              plugins: ['graphql'],
               // @remove-on-eject-end
             },
             loader: require.resolve('eslint-loader'),
