@@ -21,6 +21,7 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const getCustomConfig = require('./custom-react-scripts/config');
+const fs = require('fs');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -165,7 +166,20 @@ module.exports = {
                 extends: [require.resolve('eslint-config-react-app')],
               },
               ignore: false,
-              useEslintrc: true,
+              useEslintrc: false,
+              parser: 'babel-eslint',
+              rules: {
+                'graphql/template-strings': [
+                  'warn',
+                  {
+                    env: 'literal',
+                    schemaString: fs
+                      .readFileSync('./schema.graphql', 'utf8')
+                      .toString(),
+                  },
+                ],
+              },
+              plugins: ['graphql'],
               // @remove-on-eject-end
             },
             loader: require.resolve('eslint-loader'),
