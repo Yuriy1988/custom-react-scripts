@@ -26,20 +26,20 @@ const graphqlEnv = process.env['REACT_APP_GRAPHQL'] || '';
 const isGraphqlActivated = graphqlEnv.indexOf('true') !== -1;
 
 // Prepare custom GraphQl config
-let schemaString;
+let schemaJsonFilepath;
+let schemaFileData;
 
 // Read GraphQl schema
 try {
-  schemaString = fs.readFileSync('./schema.graphql', 'utf8').toString();
+  schemaFileData = fs.readFileSync('./schema.json', 'utf8').toString();
+  schemaJsonFilepath = path.resolve('./schema.json');
 } catch (e) {
-  schemaString = fs
-    .readFileSync(path.resolve(__dirname, '../template/schema.graphql'), 'utf8')
-    .toString();
+  schemaJsonFilepath = path.resolve(__dirname, '../template/schema.json');
 }
 
 // Define GraphQl files ESLint config
 const customESLintConfig =
-  isGraphqlActivated && schemaString
+  isGraphqlActivated && schemaJsonFilepath
     ? {
         test: /\.(gql|graphql)$/,
         enforce: 'pre',
@@ -60,7 +60,7 @@ const customESLintConfig =
                   'warn',
                   {
                     env: 'literal',
-                    schemaString,
+                    schemaJsonFilepath,
                   },
                 ],
               },
