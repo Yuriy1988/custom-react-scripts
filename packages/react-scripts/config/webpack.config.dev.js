@@ -28,13 +28,23 @@ const isGraphqlActivated = graphqlEnv.indexOf('true') !== -1;
 // Prepare custom GraphQl config
 let schemaJsonFilepath;
 let schemaFileData;
+let customESlintFile = {};
 
-// Read GraphQl schema
+// Read GraphQl schema and custom ESLint config
 try {
   schemaFileData = fs.readFileSync('./schema.json', 'utf8').toString();
   schemaJsonFilepath = path.resolve('./schema.json');
+  customESlintFile = require.resolve(path.resolve('./.eslintrc.js'));
 } catch (e) {
   schemaJsonFilepath = path.resolve(__dirname, '../template/schema.json');
+
+  try {
+    customESlintFile = require.resolve(
+      path.resolve(__dirname, '../template/.eslintrc.js')
+    );
+  } catch (e) {
+    customESlintFile = {};
+  }
 }
 
 // Define GraphQl files ESLint config
@@ -194,7 +204,10 @@ module.exports = {
               eslintPath: require.resolve('eslint'),
               // @remove-on-eject-begin
               baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
+                extends: [
+                  require.resolve('eslint-config-react-app'),
+                  customESlintFile,
+                ],
               },
               ignore: false,
               useEslintrc: false,
