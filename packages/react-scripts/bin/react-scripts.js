@@ -22,6 +22,7 @@ const nodeArgs = scriptIndex > 0 ? args.slice(0, scriptIndex) : [];
 switch (script) {
   case 'build':
   case 'eject':
+  case 'fetchGqlSchema':
   case 'start':
   case 'test': {
     const result = spawn.sync(
