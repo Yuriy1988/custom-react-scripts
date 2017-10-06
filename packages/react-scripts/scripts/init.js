@@ -43,7 +43,8 @@ module.exports = function(
     build: 'react-scripts build',
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject',
-    fetchGqlSchema: 'react-scripts fetchGqlSchema',
+    'fetch-schema': 'react-scripts fetch-schema',
+    'convert-schema': 'apollo-codegen introspect-schema schema.graphql --output schema.json',
   };
 
   fs.writeFileSync(
