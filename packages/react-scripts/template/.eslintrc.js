@@ -4,7 +4,7 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'only-multiline'],
     indent: ['error', 2, { SwitchCase: 1 }],
-    'jsx-quotes': ['error', 'prefer-single'],
+    'jsx-quotes': ['warn', 'prefer-single'],
     'line-comment-position': ['error', { position: 'above' }],
     'max-len': ['error', 100, 2],
     'max-lines': 'error',
@@ -40,6 +40,8 @@ module.exports = {
     'react/prop-types': 1,
     'react/self-closing-comp': 1,
     'react/sort-comp': 1,
+    'no-console': 1,
+    'no-debugger': 1,
     'space-before-blocks': 'error',
   },
   plugins: [],
