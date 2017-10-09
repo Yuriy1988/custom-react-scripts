@@ -18,6 +18,13 @@ if (typeof Promise === 'undefined') {
   window.Promise = require('promise/lib/es6-extensions.js');
 }
 
+if (typeof window.requestAnimationFrame === 'undefined') {
+  // requestAnimationFrame shim for old browsers
+  window.requestAnimationFrame = function(callback) {
+    setTimeout(callback, 0);
+  };
+}
+
 // fetch() polyfill for making API calls.
 require('whatwg-fetch');
 
