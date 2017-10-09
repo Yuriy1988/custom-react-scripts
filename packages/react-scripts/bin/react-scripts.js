@@ -24,6 +24,7 @@ switch (script) {
   case 'eject':
   case 'fetch-schema':
   case 'start':
+  case 'lint-tests':
   case 'test': {
     const result = spawn.sync(
       'node',
