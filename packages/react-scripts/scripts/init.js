@@ -41,6 +41,7 @@ module.exports = function(
   appPackage.scripts = {
     start: 'react-scripts start',
     build: 'react-scripts build',
+    'lint-tests': 'react-scripts lint-tests',
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject',
     'fetch-schema': 'react-scripts fetch-schema',
