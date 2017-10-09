@@ -50,6 +50,7 @@
     "graphql-tag": "^2.4.2",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
+    "jest-transform-graphql": "^2.1.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "node-sass": "^4.5.3",
