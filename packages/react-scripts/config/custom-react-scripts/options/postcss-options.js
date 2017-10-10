@@ -1,4 +1,4 @@
-const autoprefixer = require('autoprefixer');
+'use strict';
 
 module.exports = {
   ident: 'postcss',
@@ -7,9 +7,5 @@ module.exports = {
     require('postcss-cssnext'),
     require('postcss-custom-properties'),
     require('postcss-import'),
-    autoprefixer({
-      browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
-      flexbox: 'no-2009',
-    }),
   ],
 };
