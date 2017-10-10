@@ -22,6 +22,68 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const getCustomConfig = require('./custom-react-scripts/config');
+const fs = require('fs');
+const graphqlEnv = process.env['REACT_APP_GRAPHQL'] || '';
+const isGraphqlActivated = graphqlEnv.indexOf('true') !== -1;
+
+// Prepare custom GraphQl config
+let schemaJsonFilepath;
+let schemaFileData;
+let customESlintFile = {};
+
+// Read GraphQl schema and custom ESLint config
+try {
+  schemaFileData = fs.readFileSync('./schema.json', 'utf8').toString();
+  schemaJsonFilepath = path.resolve('./schema.json');
+  customESlintFile = require.resolve(path.resolve('./.eslintrc.prod.js'));
+} catch (e) {
+  schemaJsonFilepath = path.resolve(__dirname, '../template/schema.json');
+
+  try {
+    customESlintFile = require.resolve(
+      path.resolve(__dirname, '../template/.eslintrc.prod.js')
+    );
+  } catch (e) {
+    customESlintFile = {};
+  }
+}
+
+// Define GraphQl files ESLint config
+const customESLintConfig =
+  isGraphqlActivated && schemaJsonFilepath
+    ? {
+        test: /\.(gql|graphql)$/,
+        enforce: 'pre',
+        use: [
+          {
+            options: {
+              formatter: eslintFormatter,
+              eslintPath: require.resolve('eslint'),
+              // @remove-on-eject-begin
+              baseConfig: {
+                extends: [require.resolve('eslint-config-react-app')],
+              },
+              ignore: false,
+              useEslintrc: false,
+              parser: 'babel-eslint',
+              rules: {
+                'graphql/template-strings': [
+                  'warn',
+                  {
+                    env: 'literal',
+                    schemaJsonFilepath,
+                  },
+                ],
+              },
+              plugins: ['graphql'],
+              // @remove-on-eject-end
+            },
+            loader: require.resolve('eslint-loader'),
+          },
+        ],
+        include: paths.appSrc,
+      }
+    : {};
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -121,6 +183,7 @@ module.exports = {
 
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
+      customESLintConfig,
       {
         test: /\.(js|jsx)$/,
         enforce: 'pre',
@@ -133,7 +196,10 @@ module.exports = {
               // TODO: consider separate config for production,
               // e.g. to enable no-console and no-debugger only in production.
               baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
+                extends: [
+                  require.resolve('eslint-config-react-app'),
+                  customESlintFile
+                ],
               },
               ignore: false,
               useEslintrc: false,
