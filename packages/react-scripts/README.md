@@ -44,7 +44,6 @@ For example ```styles.module.css``` or ```header.module.sass``` or ```footer.mod
 #### Babel
 - ```REACT_APP_BABEL_STAGE_0=true``` - enable stage-0 Babel preset
 - ```REACT_APP_DECORATORS=true``` - enable decorators support
-- ```REACT_APP_OPT_CHAINING=true``` - enable Optional Chaining Operator support
 
 #### Graphql
 - ```REACT_APP_GRAPHQL``` - enable Graphql files loader and linting
