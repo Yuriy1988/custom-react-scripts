@@ -17,6 +17,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
@@ -29,22 +30,20 @@ const isGraphqlActivated = graphqlEnv.indexOf('true') !== -1;
 let schemaJsonFilepath;
 let schemaFileData;
 let customESlintFile = {};
+let stylelintFilePath;
 
 // Read GraphQl schema and custom ESLint config
 try {
   schemaFileData = fs.readFileSync('./schema.json', 'utf8').toString();
   schemaJsonFilepath = path.resolve('./schema.json');
+  stylelintFilePath = path.resolve('./.stylelintrc');
   customESlintFile = require.resolve(path.resolve('./.eslintrc.js'));
 } catch (e) {
   schemaJsonFilepath = path.resolve(__dirname, '../template/schema.json');
-
-  try {
-    customESlintFile = require.resolve(
-      path.resolve(__dirname, '../template/.eslintrc.js')
-    );
-  } catch (e) {
-    customESlintFile = {};
-  }
+  stylelintFilePath = path.resolve(__dirname, '../template/.stylelintrc');
+  customESlintFile = require.resolve(
+    path.resolve(__dirname, '../template/.eslintrc.js')
+  );
 }
 
 // Define GraphQl files ESLint config
@@ -282,6 +281,11 @@ module.exports = {
     // In development, this will be an empty string.
     new InterpolateHtmlPlugin(env.raw),
     // Generates an `index.html` file with the <script> injected.
+    new StyleLintPlugin({
+      configFile: stylelintFilePath,
+      emitErrors: false,
+      syntax: 'scss',
+    }),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,

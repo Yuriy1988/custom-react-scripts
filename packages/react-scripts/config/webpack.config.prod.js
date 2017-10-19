@@ -18,6 +18,7 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
@@ -28,24 +29,21 @@ const isGraphqlActivated = graphqlEnv.indexOf('true') !== -1;
 
 // Prepare custom GraphQl config
 let schemaJsonFilepath;
-let schemaFileData;
 let customESlintFile = {};
+let stylelintFilePath;
 
 // Read GraphQl schema and custom ESLint config
 try {
-  schemaFileData = fs.readFileSync('./schema.json', 'utf8').toString();
+  fs.readFileSync('./schema.json', 'utf8').toString();
   schemaJsonFilepath = path.resolve('./schema.json');
+  stylelintFilePath = path.resolve('./.stylelintrc');
   customESlintFile = require.resolve(path.resolve('./.eslintrc.prod.js'));
 } catch (e) {
   schemaJsonFilepath = path.resolve(__dirname, '../template/schema.json');
-
-  try {
-    customESlintFile = require.resolve(
-      path.resolve(__dirname, '../template/.eslintrc.prod.js')
-    );
-  } catch (e) {
-    customESlintFile = {};
-  }
+  stylelintFilePath = path.resolve(__dirname, '../template/.stylelintrc');
+  customESlintFile = require.resolve(
+    path.resolve(__dirname, '../template/.eslintrc.prod.js')
+  );
 }
 
 // Define GraphQl files ESLint config
@@ -198,7 +196,7 @@ module.exports = {
               baseConfig: {
                 extends: [
                   require.resolve('eslint-config-react-app'),
-                  customESlintFile
+                  customESlintFile,
                 ],
               },
               ignore: false,
@@ -269,6 +267,10 @@ module.exports = {
     // in `package.json`, in which case it will be the pathname of that URL.
     new InterpolateHtmlPlugin(env.raw),
     // Generates an `index.html` file with the <script> injected.
+    new StyleLintPlugin({
+      configFile: stylelintFilePath,
+      syntax: 'scss',
+    }),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
